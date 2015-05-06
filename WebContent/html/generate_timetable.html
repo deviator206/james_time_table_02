@@ -153,17 +153,44 @@
 	</div>
 
 	
-	<div ng-switch-when="3" ng-controller="timeTableComponent">
+	<div ng-switch-when="3" 
+		 ng-controller="finalStepTimeTable" 
+		 ng-init="initializeFetchAllData()"
+		>
 		<span class="lead"> Step 3  : Generate Time Table</span>	
+			<div class="container">
+			<div ng-model="ttc_message">{{ttc_message}}</div>
+				<button type="button" class="btn btn-primary" ng-show="enableClick == true" ng-click="generateTimeTableFunction()">Generate Time Table</button>
+				<div ng-repeat="singleClass in ttc_timetable ">
+					<div class="row ">
+						 <span class="lead">Class : {{singleClass.class_label}} </span>
+					</div>
+					<div class="row"  >
+						<table class="col-xs-2 table-bordered"  >
+							<tr>
+								<th class="">Time</th>
+							</tr>
+							<tr ng-repeat = "slot in ttc_slots">
+								<td>{{slot.slot_label}}</td>
+							</tr>
+				  		</table>	
+					  <table class="col-xs-2 table-bordered"  ng-repeat = "dayObject in singleClass.days_list">
+							<tr>
+								<th class=""> {{dayObject.day_label}}</th>
+							</tr>
+							<tr ng-repeat = "ttObject in dayObject.slot_list">
+								<td>{{ttObject.subject_label }}  {{ (ttObject.teacher_name !== "NA" && ttObject.teacher_name !== ""  )?"("+ttObject.teacher_name+")":""}}</td>
+							</tr>
+					  </table>
+					</div>
+				</div>
+					
+		  
+		  </div>
 		
 	
 	</div>
 
-	
-	<div ng-switch-when="4">
-		<span class="lead"> Step 4 </span>	
-	
-	</div>
 
 	
 </div>

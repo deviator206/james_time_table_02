@@ -44,7 +44,8 @@ deviatorApp.service("appMenuLabel",function()
 			"ADD_NEW_TEACHER":"teacherAPI",
 			"DELETE_TEACHER":"deleteTeacher",
 			"LOAD_DATA_FOR_MAPPING_SCREEN":"mapCST",
-			"DELETE_CST_MAPPING":"deleteCST"
+			"DELETE_CST_MAPPING":"deleteCST",
+			"FETCH_EXISTING_TT":"fetchTT"
 	};
 	
 	
@@ -54,7 +55,8 @@ deviatorApp.service("appMenuLabel",function()
 			"ADD_NEW_TEACHER":"data/new_teacher_added.json",
 			"DELETE_TEACHER":"data/new_teacher_added.json",
 			"LOAD_DATA_FOR_MAPPING_SCREEN":"data/cs_mapped.json",
-			"DELETE_CST_MAPPING":"data/cs_mapped.json"
+			"DELETE_CST_MAPPING":"data/cs_mapped.json",
+			"FETCH_EXISTING_TT":"data/cs_mapped.json"
 	};
 	
 	

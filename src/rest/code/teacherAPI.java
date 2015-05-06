@@ -122,7 +122,7 @@ public class teacherAPI extends HttpServlet {
 			Connection conn = DBProperties.getConnection();
 
 			String query = "INSERT INTO teacher (firstname,lastname) VALUES (?,?)";
-			PreparedStatement stmnt = conn.prepareStatement(query);
+			PreparedStatement stmnt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 			
 			stmnt.setString(1,(String) jsonFormatterObject.get("first_name"));
 			stmnt.setString(2,(String) jsonFormatterObject.get("last_name"));

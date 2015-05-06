@@ -47,11 +47,12 @@ public class mapCST extends HttpServlet {
 			Connection conn = DBProperties.getConnection(); //DriverManager.getConnection(DB_URL,User,Password);
 			
 			Statement stmnt = conn.createStatement();
+			System.out.println(" SELECTING FROM SUBJECT test!! ");
 			
 			//includes teachers.... But it is not requried since we would be using global pool
 			//String sql="SELECT a.classid,c.name,a.subjectid,a.name,a.count,a.successive, b.teacherid , d.firstname FROM SUBJECT a   INNER JOIN class c ON  (a.classid = c.classid )LEFT JOIN map_teach_sub b  INNER JOIN teacher d ON b.teacherid = d.teacherid ON (a.subjectid = b.subjectid) AND a.classid = b.classid ";
 			
-			String sql="SELECT a.classid,c.name,a.subjectid,a.name,a.count,a.successive FROM SUBJECT a   INNER JOIN class c ON  (a.classid = c.classid ) " ;
+			String sql="SELECT a.classid,c.name,a.subjectid,a.name,a.count,a.successive FROM subject a   INNER JOIN class c ON  (a.classid = c.classid ) " ;
 			ResultSet rs = stmnt.executeQuery(sql);
 			
 			
@@ -138,7 +139,7 @@ public class mapCST extends HttpServlet {
 				//jArr.put(jObj);
 			}
 			
-			sql = "SELECT a.mapid,a.classid,b.name,a.subjectid,c.name,c.count,c.successive,a.teacherid,d.firstname FROM map_teach_sub a INNER JOIN class b ON a.classid = b.classid     JOIN SUBJECT c ON c.subjectid = a.subjectid JOIN teacher d ON d.teacherid = a.teacherid";
+			sql = "SELECT a.mapid,a.classid,b.name,a.subjectid,c.name,c.count,c.successive,a.teacherid,d.firstname FROM map_teach_sub a INNER JOIN class b ON a.classid = b.classid     JOIN subject c ON c.subjectid = a.subjectid JOIN teacher d ON d.teacherid = a.teacherid";
 			rs = stmnt.executeQuery(sql);
 			while(rs.next())
 			{
@@ -225,8 +226,10 @@ public class mapCST extends HttpServlet {
 		try {
 			
 			Connection conn = DBProperties.getConnection();
+			
+			
 			String checkIfExist = "SELECT COUNT(*) FROM map_teach_sub WHERE classid =? AND subjectid = ? AND teacherid =?";
-			PreparedStatement checkingStmnt = conn.prepareStatement(checkIfExist);
+			PreparedStatement checkingStmnt = conn.prepareStatement(checkIfExist, Statement.RETURN_GENERATED_KEYS);
 			checkingStmnt.setInt(1, jsonFormatterObject.getInt("class_id"));
 			checkingStmnt.setInt(2,jsonFormatterObject.getInt("subject_id"));
 			checkingStmnt.setInt(3,jsonFormatterObject.getInt("teacher_id"));
@@ -243,7 +246,7 @@ public class mapCST extends HttpServlet {
 			{
 			
 				String query = "INSERT INTO map_teach_sub (classid,subjectid,teacherid) VALUES (?,?,?)";
-				PreparedStatement stmnt = conn.prepareStatement(query);
+				PreparedStatement stmnt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 				
 				stmnt.setInt(1, jsonFormatterObject.getInt("class_id"));
 				stmnt.setInt(2,jsonFormatterObject.getInt("subject_id"));

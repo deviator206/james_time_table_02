@@ -1,12 +1,253 @@
 
-deviatorApp.controller("timeTableComponent",function($scope,$location,teacherCollection)
+deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,csMappedCollection,timetableService)
 {
 	$scope.ttc_days = [];
 	$scope.ttc_slots = [];
 	$scope.ttc_subjects = [];
 	$scope.ttc_teachers = [];
+	$scope.enableClick =false;
+	$scope.ttc_timetable;
+	$scope.initializeFetchAllData = function()
+	{
+		$scope.enableClick = false;
+		$scope.ttc_message =" Loading Server Data..."
+		timetableService.fetchFromDB({"responseReceived":$scope.ttcLoaded});
+	};
+	$scope.ttcLoaded = function()
+	{
+		$scope.enableClick = true;
+		$scope.ttc_message =""
+	};
 	
-	$scope.generateActualTimeTable = function(classID)
+	$scope.generateTimeTableFunction = function()
+	{
+		$scope.ttc_message ="Please wait Generating fresh Timetable...."
+		var classes = timetableCollection.getOnlyClassLabels();
+		var slots = timetableCollection.getTTMetaSlots();
+		$scope.ttc_slots =slots;
+		var days = timetableCollection.getTTMetaDays();
+		var timetable ={};
+		
+		
+		for(var classIndex =0;classIndex < classes.length;classIndex++)
+		{
+				var classRelatedInfo = angular.copy(csMappedCollection.getClassDetails(classes[classIndex].class_id)) ;
+				
+				
+				if(classRelatedInfo !== null)
+				{
+					var subjects = classRelatedInfo.subjects;
+					
+					/*subjects.push({
+						"subject_id":-99,
+						"subject_label":"Break",
+						"count" : 1
+					})*/
+					var slotTracker =[] ,dayTracker =[];
+					                  
+					for(var subjectIndex =0;subjectIndex < subjects.length;subjectIndex++)
+					{
+						dayTracker =[];
+						for(var subCountIndex = 0; subCountIndex < subjects[subjectIndex].count;subCountIndex++)
+						{
+							var perDayMax = 1;
+							if(subjects[subjectIndex].count > days.length)
+								perDayMax = 2;
+							
+							for(var dayIndex = 0;dayIndex< days.length;dayIndex++)
+							{
+								var shdExitDay = false;
+								if(dayTracker.indexOf(days[dayIndex].day_id) === -1)
+								{
+									slotTracker =[];
+									for(var slotIndex = 0;slotIndex< slots.length;slotIndex++)
+									{
+										//check for lunch break
+										/*if(subjects[subjectIndex].subject_id == -99 && slots[slotIndex].slot_id == 20 )
+										{
+											var tempObj = {
+													"day_id":days[dayIndex].day_id,
+													"day_label":days[dayIndex].day_label,
+													
+													"slot_id":slots[slotIndex].slot_id,
+													"class_label":classes[classIndex].class_label,
+													"class_id":classes[classIndex].class_id,
+													
+													"teacher_id" :-11,
+													"teacher_name":"",
+													
+													"subject_id" :-11,
+													"subject_label" :"BREAK"
+												}; 
+											timetableService.addForDisplay(tempObj);
+											break;
+										
+										}
+										else
+										{*/
+										if(slots[slotIndex].slot_id !== 20)
+										{
+												if(slotTracker.indexOf(slots[slotIndex].slot_id) === -1 && (timetable[classes[classIndex].class_id+"_"+days[dayIndex].day_id+"_"+slots[slotIndex].slot_id] == undefined))
+												{
+													var teachers = csMappedCollection.getTeachersForSubject(subjects[subjectIndex].subject_id,classes[classIndex].class_id);
+													if(teachers !== null && !timetableService.isTeacherBlocked(teachers.teacher_id,classes[classIndex].class_id,days[dayIndex].day_id,slots[slotIndex].slot_id))
+													{
+														slotTracker.push(slots[slotIndex].slot_id);
+														dayTracker.push(days[dayIndex].day_id);
+														
+														if(slotTracker.length >= perDayMax)
+															shdExitDay =true;
+														
+														var tempObj = {
+																"day_id":days[dayIndex].day_id,
+																"day_label":days[dayIndex].day_label,
+																
+																"slot_id":slots[slotIndex].slot_id,
+																"class_label":classes[classIndex].class_label,
+																"class_id":classes[classIndex].class_id,
+																
+																"teacher_id" :teachers.teacher_id,
+																"teacher_name":teachers.teacher_name,
+																
+																"subject_id" :subjects[subjectIndex].subject_id,
+																"subject_label" :subjects[subjectIndex].subject_label
+															}; 
+														timetableService.addRowInTimeTable(tempObj);
+														timetableService.addForDisplay(tempObj);
+														timetableService.blockTeacher(teachers.teacher_id,classes[classIndex].class_id,days[dayIndex].day_id,slots[slotIndex].slot_id);
+														
+														timetable[classes[classIndex].class_id+"_"+days[dayIndex].day_id+"_"+slots[slotIndex].slot_id]= tempObj;
+														if(slotTracker.length >= perDayMax)
+															break;
+													}
+													else
+													{
+														//rest the current count
+														var tempObj = {
+																"day_id":days[dayIndex].day_id,
+																"day_label":days[dayIndex].day_label,
+																
+																"slot_id":slots[slotIndex].slot_id,
+																"class_id":classes[classIndex].class_id,
+																"class_label":classes[classIndex].class_label,
+																
+																"teacher_id" :-1,
+																"teacher_name":"NA",
+																
+																"subject_id" :-1,
+																"subject_label" :"NOT AVAILABLE"
+															}; 
+														timetableService.addForDisplay(tempObj);
+														console.log(" SLOT : "+slots[slotIndex].slot_id +" | "+slots[slotIndex].slot_label+"teachers not availble",teachers)
+														
+													}//
+												}//IF SLOT EXIsT
+												
+										} //THIS IS REGARDING TO LUNCH
+										
+										
+										
+									}//SLOT LOOP
+								}//IF DAY DOES  EXIST
+								
+								if(shdExitDay)
+									break;
+							}//DAY LOOP
+							
+							
+							
+						}//COUNT LOOP
+						
+					}//SUBJECT LOOP
+					
+				}// CLASS EXIST
+				
+			//	console.log(timetable);
+		}//CLASS 
+		 
+		timetableService.addBreakInTT();
+		console.log(timetableService.getFinalTTObject());
+		$scope.ttc_timetable = timetableService.getFinalTTObject();
+		$scope.ttc_message ="Time Table Ready for review.";
+		
+		
+	}
+	$scope.ttcLoaded_unique = function()
+	{
+		var classes = timetableCollection.getOnlyClassLabels();
+		var slots = timetableCollection.getTTMetaSlots();
+		var days = timetableCollection.getTTMetaDays();
+		
+		
+		//var actualReference = csMappedCollection.getClassDetails(classes[0].class_id);
+		var classRelatedInfo = angular.copy(csMappedCollection.getClassDetails(classes[0].class_id)) ;
+		
+		for(var dayIndex = 0;dayIndex< days.length;dayIndex++)
+		{
+			console.log(" DAY : "+days[dayIndex].day_id +" | "+days[dayIndex].day_label);
+			var localSubjectTracker = [];
+			for(var slotIndex = 0;slotIndex< slots.length;slotIndex++)
+			{
+				if(classRelatedInfo !== null)
+				{
+					var subjects = classRelatedInfo.subjects;
+					
+					for(var subjectIndex =0;subjectIndex < subjects.length;subjectIndex++)
+					{
+						if(localSubjectTracker.indexOf(subjects[subjectIndex].subject_id) == -1 && subjects[subjectIndex].count > 0)
+						{
+							var teachers = csMappedCollection.getTeachersForSubject(subjects[subjectIndex].subject_id,classes[0].class_id);
+							if(teachers !== null)
+							{
+								console.log(" SLOT : "+slots[slotIndex].slot_id +" | "+slots[slotIndex].slot_label+" SUB :"+subjects[subjectIndex].subject_label +" | "+teachers.teacher_id +" :: "+teachers.teacher_name)
+								timetableService.addRowInTimeTable({
+									"day_id":days[dayIndex].day_id,
+									"day_label":days[dayIndex].day_label,
+									
+									"slot_id":slots[slotIndex].slot_id,
+									"class_id":classes[0].class_id,
+									
+									"teacher_id" :teachers.teacher_id,
+									"teacher_name":teachers.teacher_name,
+									
+									"subject_id" :subjects[subjectIndex].subject_id,
+									"subject_label" :subjects[subjectIndex].subject_label
+								});
+								subjects[subjectIndex].count--;
+								localSubjectTracker.push(subjects[subjectIndex].subject_id);
+								break;
+							}
+							else
+							{
+								//rest the current count
+									console.log(" SLOT : "+slots[slotIndex].slot_id +" | "+slots[slotIndex].slot_label+"teachers not availble",teachers)
+							}
+							//reduce the 
+							
+						}
+						else
+						{
+							console.log(" SLOT : "+slots[slotIndex].slot_id +" | "+slots[slotIndex].slot_label+"subjects not available!! due to count funda")
+							
+						}
+					}//subjects Loop
+					
+				}
+			}//slots loop	
+			
+			if(localSubjectTracker.length < slots.length)
+			{
+				 // more subjects to be added
+			}
+			
+		}//days loop
+		
+		console.log(timetableService.getFinalTT());
+		
+	};
+	
+	
+	/*$scope.generateActualTimeTable = function(classID)
 	{
 		// fetch list of days
 		$scope.ttc_days = [{"day_id":1,"day_label":"Monday"},{"day_id":2,"day_label":"Tuesday"},{"day_id":3,"day_label":"Wednesday"},{"day_id":4,"day_label":"Thursday"},{"day_id":5,"day_label":"Friday"}];
@@ -63,7 +304,79 @@ deviatorApp.controller("timeTableComponent",function($scope,$location,teacherCol
 					},
 					{
 						"subject_id":15,
-						"subject_label":"kuch bhi",
+						"subject_label":"kuch bhi1",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":16,
+						"subject_label":"kuch bhi2",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":17,
+						"subject_label":"kuch bhi3",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":18,
+						"subject_label":"kuch bhi4",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":19,
+						"subject_label":"kuch bhi5",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":20,
+						"subject_label":"kuch bhi6",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":21,
+						"subject_label":"kuch bhi7",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":22,
+						"subject_label":"kuch bhi8",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":23,
+						"subject_label":"kuch bhi9",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":24,
+						"subject_label":"kuch bhi10",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":25,
+						"subject_label":"kuch bhi11",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":26,
+						"subject_label":"kuch bhi12",
+						"count":3,
+						"continous":1
+					},
+					{
+						"subject_id":27,
+						"subject_label":"kuch bhi13",
 						"count":3,
 						"continous":1
 					}
@@ -93,11 +406,26 @@ deviatorApp.controller("timeTableComponent",function($scope,$location,teacherCol
 					}
 			
 				];
+		
+		$scope.ttc_mapping =[
+		                     	{"subject_id":"11","class_id":"1","teacher_id":"21"},
+		                     	{"subject_id":"12","class_id":"1","teacher_id":"18"},
+		                     	{"subject_id":"13","class_id":"1","teacher_id":"18"},
+		                     	{"subject_id":"14","class_id":"1","teacher_id":"19"},
+		                     	{"subject_id":"15","class_id":"1","teacher_id":"20"},
+		                     	{"subject_id":"11","class_id":"1","teacher_id":"21"},
+		                     	{"subject_id":"15","class_id":"1","teacher_id":"19"},
+		                     	{"subject_id":"15","class_id":"1","teacher_id":"21"},
+		                     	{"subject_id":"15","class_id":"2","teacher_id":"21"},
+		                     	{"subject_id":"15","class_id":"2","teacher_id":"21"}];
+		
+		
+		
 				
 				
 		
 		
-	}
+	}*/
 	
 });
 
@@ -107,6 +435,7 @@ deviatorApp.controller("generateTimeTable",function($scope,$location,teacherColl
 		$scope.currentStep = 0;
 		$scope.teacherModalInfo ={};
 		$scope.teacherInfo ={};
+		$scope.TOTAL_STEPS = 3;
 		
 		$scope.setUp = function()
 		{
@@ -187,7 +516,7 @@ deviatorApp.controller("generateTimeTable",function($scope,$location,teacherColl
 			{
 				return false;
 			}
-			if($scope.currentStep < 4)
+			if($scope.currentStep < $scope.TOTAL_STEPS)
 			$scope.currentStep++
 			
 			
@@ -308,3 +637,4 @@ deviatorApp.controller("mappingTeacherAndStudent",function($scope,csMappedCollec
 		
 	}
 });
+

@@ -3,7 +3,6 @@ package rest.code;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,15 +17,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Servlet implementation class fetchSchoolMetaData
+ * Servlet implementation class fetchTT
  */
-public class fetchSchoolMetaData extends HttpServlet {
+public class fetchTT extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public fetchSchoolMetaData() {
+	public fetchTT() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -39,66 +38,47 @@ public class fetchSchoolMetaData extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
-		
-		JSONObject returnableJSON = new JSONObject();	
-		JSONArray onlyClass = new JSONArray();
-		JSONArray onlyDays =new JSONArray();
-		JSONArray onlySlots =new JSONArray();
-		JSONObject ttMetaData =new JSONObject();
 
-		try {
+		JSONObject returnableJSON = new JSONObject();
+		JSONArray collectiveTT = new JSONArray();
 		
+		try {
 			Connection conn = DBProperties.getConnection();
 
 			Statement stmnt = conn.createStatement();
 
-			String sql; 
+			String sql;
 
 			ResultSet rs;
-			
-			//FETCH CLASS
-			sql = "Select * from class where isactive = 1";
+
+			// FETCH CLASS
+			sql = "SELECT * FROM time_table";
+
 			rs = stmnt.executeQuery(sql);
+
 			while (rs.next()) {
 				JSONObject jObj = new JSONObject();
-				jObj.put("class_id", rs.getInt(1));
-				jObj.put("class_label", rs.getString(2));
-				onlyClass.put(jObj);
-			}
-			returnableJSON.put("onlyClass",onlyClass);
-			
-			
-			//Days
-			sql = "Select * from days where isactive=1";
-			rs = stmnt.executeQuery(sql);
-			while(rs.next())
-			{
-				JSONObject tempObj = new JSONObject();
-				tempObj.put("day_id",rs.getInt(1));
-				tempObj.put("day_label",rs.getString(2));
-				onlyDays.put(tempObj);
-			}
-			ttMetaData.put("days",onlyDays);
-			
-			//SLOTS
-			sql = "Select * from time_slot where active=1 order by label asc";
-			rs = stmnt.executeQuery(sql);
-			while(rs.next())
-			{
-				JSONObject tempObj1 = new JSONObject();
-				tempObj1.put("slot_id",rs.getInt(1));
-				tempObj1.put("slot_label",rs.getString(2));
-				onlySlots.put(tempObj1);
+				jObj.put("timetable_id", rs.getInt(1));
+				
+				jObj.put("slot_id", rs.getInt(1));
+				jObj.put("class_id", rs.getInt(2));
+				jObj.put("teacher_id", rs.getInt(3));
+				jObj.put("teacher_name", rs.getString(4));
+				jObj.put("subject_id", rs.getInt(5));
+				jObj.put("subject_label", rs.getString(6));
+				jObj.put("day_id", rs.getInt(7));
+				jObj.put("day_label", rs.getString(8));
+				
+			/*	"subject_label":"susane"
+				"class_label":"I",
+				"teacher_name":"aila",
+				"slot_label":"8-9"
+				*/
+				
+				collectiveTT.put(jObj);
 			}
 			
-			ttMetaData.put("days",onlyDays);
-			ttMetaData.put("slots",onlySlots);
-			
-			returnableJSON.put("onlyMetaData",ttMetaData);
-			
-			rs.close();
-			stmnt.close();
-			DBProperties.closeConnection();
+			returnableJSON.putOnce("timetable",collectiveTT);
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -107,12 +87,13 @@ public class fetchSchoolMetaData extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// map entity
-
+		
+		
+		
 		PrintWriter out = response.getWriter();
 		out.write(returnableJSON.toString());
 		out.close();
+
 	}
 
 	/**

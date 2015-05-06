@@ -1,7 +1,7 @@
 <div class="container">
 	<form class="form" role="form" ng-init="initScreen()">
 						  <div class="form-group">
-							<label for="exampleInputEmail1">Select Class</label>
+							<label>Select Class</label>
 							<select  ng-change="showTimeTable()" ng-options="item as item.class_label for item in classList"  ng-model="sampleModel">
 							<option>select</option>
 							</select>

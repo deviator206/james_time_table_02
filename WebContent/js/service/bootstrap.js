@@ -19,7 +19,41 @@ deviatorApp.service("csMappedCollection",function($http,appMenuLabel){
 	this.getClassList = function()
 	{
 		return onlyClassList;
+	};
+	this.getTeachersForSubject = function(subjectId,classId)
+	{
+		var i =0;
+		var bReturn = null;
+		
+		for(i=0;i<csDisplay.length;i++)
+		{
+			if(csDisplay[i]["class_id"] == classId && csDisplay[i]["subject_id"] == subjectId  )
+			{
+				bReturn = csDisplay[i];
+				break;	
+			}
+		}
+		
+		return bReturn;
+		
 	}
+	
+	this.getClassDetails = function(classId)
+	{
+		var i =0;
+		var bReturn = null;
+		
+		for(i=0;i<onlyClassList.length;i++)
+		{
+			if(onlyClassList[i]["class_id"] == classId)
+			{
+				bReturn = onlyClassList[i];
+				break;	
+			}
+		}
+		
+		return bReturn
+	};
 	this.fetchFromDB = function(controllerInstance)
 	{
 		if(csDisplay.length <= 0)
@@ -123,6 +157,7 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 	var onlyClasses =[];
 	var ttMetaData = {};
 	
+	
 	this.loadMetaData = function(controllerScope)
 	{
 		if(Object.keys(ttMetaData).length > 0)
@@ -152,7 +187,6 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 	
 	this.fetchClassTT = function(id,controllerScope)
 	{
-		//TODO: changes 
 		$http.get('data/class_tt.json?id='+id).
 			  success(function(data, status, headers, config) {
 				// this callback will be called asynchronously
@@ -170,7 +204,6 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 	
 	
 	this.setTTCollection = function(arrT,onlyclass,onlyMetaData){
-		
 		ttCollection = arrT;
 		onlyClasses = onlyclass;
 		ttMetaData = onlyMetaData;
@@ -197,6 +230,96 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 	
 });
 
+deviatorApp.service("timetableService",function($http,appMenuLabel){
+	// this would be responsible for TIME TABLE
+	var ttc =[];
+	var teachersBlocked={};
+	var displayPurpose ={};
+	this.blockTeacher = function(teacherId,classId,dayId,slotId,subjectId)
+	{
+		teachersBlocked[teacherId+"#"+classId+"_"+dayId+"_"+slotId]=subjectId;
+	};
+	this.isTeacherBlocked = function(teacherId,classId,dayId,slotId)
+	{
+		var bReturn = false;
+		
+		if(teachersBlocked.hasOwnProperty(teacherId+"#"+classId+"_"+dayId+"_"+slotId))
+			bReturn = true;
+		
+		return bReturn;
+	}
+	
+	this.fetchFromDB = function(instance)
+	{
+		$http.get(appMenuLabel.SERVER_URL["FETCH_EXISTING_TT"]).
+		  success(function(data, status, headers, config) {
+			ttc = data.timetable;
+			instance.responseReceived(true);
+		  }).
+		  error(function(data, status, headers, config) {
+			instance.responseReceived(false);
+		  });
+		
+	};
+	
+	this.addRowInTimeTable = function(obj)
+	{
+		ttc.push(obj);
+	};
+	
+	this.getFinalTT = function()
+	{
+		return ttc;	
+	};
+	
+	this.addBreakInTT = function()
+	{
+		
+	}
+	
+	this.addForDisplay = function(value)
+	{
+		if(displayPurpose.hasOwnProperty(value.class_id))
+		{
+			 //YES
+			if(displayPurpose[value.class_id]["days_list"].hasOwnProperty(value.day_id))
+			{//DAY EXIST
+				displayPurpose[value.class_id]["days_list"][value.day_id]["slot_list"][value.slot_id] = value;
+			}
+			else
+			{
+				 //NEW DAY
+				displayPurpose[value.class_id]["days_list"][value.day_id]={};
+				displayPurpose[value.class_id]["days_list"][value.day_id] ={
+						"day_label":value.day_label,
+						"slot_list":{}
+				};
+				displayPurpose[value.class_id]["days_list"][value.day_id]["slot_list"][value.slot_id] = value;
+			}
+		}
+		else
+		{
+			// NEW ENTRY
+			displayPurpose[value.class_id] ={
+					"class_label":value.class_label,
+					"days_list":{}
+			};
+			
+			displayPurpose[value.class_id]["days_list"][value.day_id] = {
+					"day_label":value.day_label,
+					"slot_list":{}
+			};
+			
+			displayPurpose[value.class_id]["days_list"][value.day_id]["slot_list"][value.slot_id] = value; 
+			
+		}
+	};
+	
+	this.getFinalTTObject = function()
+	{
+		return displayPurpose;
+	};
+});
 
 deviatorApp.service("teacherCollection",function($http,appMenuLabel){
 	var teacherList = [];

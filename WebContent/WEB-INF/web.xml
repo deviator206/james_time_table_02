@@ -69,4 +69,14 @@
     <servlet-name>deleteCST</servlet-name>
     <url-pattern>/deleteCST</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>fetchTT</display-name>
+    <servlet-name>fetchTT</servlet-name>
+    <servlet-class>rest.code.fetchTT</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>fetchTT</servlet-name>
+    <url-pattern>/fetchTT</url-pattern>
+  </servlet-mapping>
 </web-app>
