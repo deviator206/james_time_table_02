@@ -80,14 +80,19 @@ public class fetchSchoolMetaData extends HttpServlet {
 			}
 			ttMetaData.put("days",onlyDays);
 			
+			
+			System.out.println(" CCCCCCCCCCCCCCCCC");
 			//SLOTS
 			sql = "Select * from time_slot where active=1 order by label asc";
 			rs = stmnt.executeQuery(sql);
 			while(rs.next())
 			{
+				
 				JSONObject tempObj1 = new JSONObject();
 				tempObj1.put("slot_id",rs.getInt(1));
 				tempObj1.put("slot_label",rs.getString(2));
+				tempObj1.put("isbreak",rs.getString(4));
+				
 				onlySlots.put(tempObj1);
 			}
 			

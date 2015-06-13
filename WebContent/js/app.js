@@ -39,24 +39,27 @@ deviatorApp.service("appMenuLabel",function()
 	
 	this.SERVER_URL = {
 			"VIEW_TT_LOAD_META_DATA":"fetchSchoolMetaData",
-			"LOAD_CLASS_SPECIFIC_DATA":"",
+			"LOAD_CLASS_SPECIFIC_DATA":"GetTimeTableOfClass",
 			"FETCH_ONLY_TEACHER":"teacherAPI",
 			"ADD_NEW_TEACHER":"teacherAPI",
 			"DELETE_TEACHER":"deleteTeacher",
 			"LOAD_DATA_FOR_MAPPING_SCREEN":"mapCST",
 			"DELETE_CST_MAPPING":"deleteCST",
-			"FETCH_EXISTING_TT":"fetchTT"
+			"FETCH_EXISTING_TT":"fetchTT",
+			"SUBMIT_GENERATED_TT":"SubmitGeneratedTimeTable"
 	};
 	
 	
 	this.SERVER_URL_1 ={
 			"VIEW_TT_LOAD_META_DATA":'data/tt_meta_data.json',
+			"LOAD_CLASS_SPECIFIC_DATA":	'data/class_tt.json',
 			"FETCH_ONLY_TEACHER":'data/teacher_list.json',
 			"ADD_NEW_TEACHER":"data/new_teacher_added.json",
 			"DELETE_TEACHER":"data/new_teacher_added.json",
 			"LOAD_DATA_FOR_MAPPING_SCREEN":"data/cs_mapped.json",
 			"DELETE_CST_MAPPING":"data/cs_mapped.json",
-			"FETCH_EXISTING_TT":"data/cs_mapped.json"
+			"FETCH_EXISTING_TT":"data/cs_mapped.json",
+			"SUBMIT_GENERATED_TT":"data/tt_submitted.json"
 	};
 	
 	

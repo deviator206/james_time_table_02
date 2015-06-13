@@ -79,4 +79,24 @@
     <servlet-name>fetchTT</servlet-name>
     <url-pattern>/fetchTT</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>SubmitGeneratedTimeTable</display-name>
+    <servlet-name>SubmitGeneratedTimeTable</servlet-name>
+    <servlet-class>rest.code.SubmitGeneratedTimeTable</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SubmitGeneratedTimeTable</servlet-name>
+    <url-pattern>/SubmitGeneratedTimeTable</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>GetTimeTableOfClass</display-name>
+    <servlet-name>GetTimeTableOfClass</servlet-name>
+    <servlet-class>rest.code.GetTimeTableOfClass</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetTimeTableOfClass</servlet-name>
+    <url-pattern>/GetTimeTableOfClass</url-pattern>
+  </servlet-mapping>
 </web-app>

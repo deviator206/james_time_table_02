@@ -10,6 +10,7 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 	$scope.initializeFetchAllData = function()
 	{
 		$scope.enableClick = false;
+		$scope.timetableGenerated = false;
 		$scope.ttc_message =" Loading Server Data..."
 		timetableService.fetchFromDB({"responseReceived":$scope.ttcLoaded});
 	};
@@ -19,12 +20,24 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 		$scope.ttc_message =""
 	};
 	
+	
+	$scope.submitGeneratedTimeTable =  function()
+	{
+		timetableService.submitGeneratedTimetable({"responseReceived":$scope.timetableSubmissionSuccess});
+	}
+	
+	$scope.timetableSubmissionSuccess = function()
+	{
+		console.log(" Submission done");
+	}
+	
 	$scope.generateTimeTableFunction = function()
 	{
-		$scope.ttc_message ="Please wait Generating fresh Timetable...."
+		$scope.timetableGenerated = false;
+		$scope.ttc_message ="Please wait Generating fresh Timetable....";
 		var classes = timetableCollection.getOnlyClassLabels();
 		var slots = timetableCollection.getTTMetaSlots();
-		$scope.ttc_slots =slots;
+		$scope.ttc_slots = slots;
 		var days = timetableCollection.getTTMetaDays();
 		var timetable ={};
 		
@@ -115,7 +128,20 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 														timetableService.addRowInTimeTable(tempObj);
 														timetableService.addForDisplay(tempObj);
 														timetableService.blockTeacher(teachers.teacher_id,classes[classIndex].class_id,days[dayIndex].day_id,slots[slotIndex].slot_id);
-														
+														timetableService.addBreakInTT({
+																"day_id":days[dayIndex].day_id,
+																"day_label":days[dayIndex].day_label,
+																
+																"slot_id":timetableCollection.getBreakSlot().slot_id,
+																"class_label":classes[classIndex].class_label,
+																"class_id":classes[classIndex].class_id,
+																
+																"teacher_id" :"",
+																"teacher_name":"",
+																
+																"subject_id" :"",
+																"subject_label" :"BREAK"
+															});
 														timetable[classes[classIndex].class_id+"_"+days[dayIndex].day_id+"_"+slots[slotIndex].slot_id]= tempObj;
 														if(slotTracker.length >= perDayMax)
 															break;
@@ -167,8 +193,10 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 		 
 		timetableService.addBreakInTT();
 		console.log(timetableService.getFinalTTObject());
+		console.log(timetableService.getFinalTT());
 		$scope.ttc_timetable = timetableService.getFinalTTObject();
 		$scope.ttc_message ="Time Table Ready for review.";
+		$scope.timetableGenerated = true;
 		
 		
 	}

@@ -156,7 +156,7 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 	var ttCollection = {};
 	var onlyClasses =[];
 	var ttMetaData = {};
-	
+	var breakSlot ={};
 	
 	this.loadMetaData = function(controllerScope)
 	{
@@ -173,6 +173,14 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 				// when the response is available
 					onlyClasses = data.onlyClass;
 					ttMetaData = data.onlyMetaData;
+					for(var i =0 ;i < ttMetaData.slots.length;i++)
+					{
+						if(ttMetaData.slots[i]["isbreak"] == "1")
+							{
+								breakSlot = ttMetaData.slots[i];
+								break;
+							}
+					}
 					controllerScope.renderView(true);
 			  }).
 			  error(function(data, status, headers, config) {
@@ -187,7 +195,8 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 	
 	this.fetchClassTT = function(id,controllerScope)
 	{
-		$http.get('data/class_tt.json?id='+id).
+		//data/class_tt.json?id='+id
+		$http.get(appMenuLabel.SERVER_URL['LOAD_CLASS_SPECIFIC_DATA']).
 			  success(function(data, status, headers, config) {
 				// this callback will be called asynchronously
 				// when the response is available
@@ -200,13 +209,19 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 					controllerScope.dataFetched(false);
 			  });
 	}
-	
+	this.getBreakSlot = function()
+	{
+		return breakSlot;
+		
+	}
 	
 	
 	this.setTTCollection = function(arrT,onlyclass,onlyMetaData){
 		ttCollection = arrT;
 		onlyClasses = onlyclass;
 		ttMetaData = onlyMetaData;
+		
+		
 		
 	};
 	this.getTimeTable= function()
@@ -249,6 +264,17 @@ deviatorApp.service("timetableService",function($http,appMenuLabel){
 		return bReturn;
 	}
 	
+	this.submitGeneratedTimetable = function(instance)
+	{
+		$http.post(appMenuLabel.SERVER_URL["SUBMIT_GENERATED_TT"],{"schedule":ttc}).
+		  success(function(data, status, headers, config) {
+			instance.responseReceived(true);
+		  }).
+		  error(function(data, status, headers, config) {
+			instance.responseReceived(false);
+		  });
+		
+	}
 	this.fetchFromDB = function(instance)
 	{
 		$http.get(appMenuLabel.SERVER_URL["FETCH_EXISTING_TT"]).
@@ -264,7 +290,8 @@ deviatorApp.service("timetableService",function($http,appMenuLabel){
 	
 	this.addRowInTimeTable = function(obj)
 	{
-		ttc.push(obj);
+		if(obj != undefined)
+			ttc.push(obj);
 	};
 	
 	this.getFinalTT = function()
@@ -272,9 +299,9 @@ deviatorApp.service("timetableService",function($http,appMenuLabel){
 		return ttc;	
 	};
 	
-	this.addBreakInTT = function()
+	this.addBreakInTT = function(obj)
 	{
-		
+		ttc.push(obj);
 	}
 	
 	this.addForDisplay = function(value)
