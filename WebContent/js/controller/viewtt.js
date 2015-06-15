@@ -39,12 +39,14 @@ deviatorApp.controller("viewTimeTable",function($scope,$location,appMenuLabel,ti
 	
 	$scope.showTimeTable = function()
 	{
+		$scope.ttc_message ="Please wait ... Fetching data from server...";
 		console.log("fetch new TT"+$scope.sampleModel.class_label +" || "+$scope.sampleModel.class_id);
 		timetableCollection.fetchClassTT($scope.sampleModel.class_id,{"dataFetched":$scope.fullTTFetched})
 	}
 	
 	$scope.fullTTFetched = function()
 	{
+		$scope.ttc_message ="Successfully fetched the data";
 		$scope.tt = timetableCollection.getTimeTable()
 	}
 	
