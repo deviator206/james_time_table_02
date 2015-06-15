@@ -159,7 +159,7 @@
 		>
 		<span class="lead"> Step 3  : Generate Time Table</span>	
 			<div class="container">
-			<div ng-model="ttc_message">{{ttc_message}}</div>
+			<div ng-model="ttc_message"><span style="font-weight:bold;color:red">{{ttc_message}}</span></div>
 				<button type="button" class="btn btn-primary" ng-show="enableClick == true" ng-click="generateTimeTableFunction()">Generate Time Table</button>
 				
 				<button type="button" class="btn btn-primary" ng-show="timetableGenerated == true" ng-click="submitGeneratedTimeTable()">Submit generated Time Table</button>

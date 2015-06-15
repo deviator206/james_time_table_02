@@ -29,6 +29,9 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 	$scope.timetableSubmissionSuccess = function()
 	{
 		console.log(" Submission done");
+		
+		$scope.ttc_message ="Time Table is successfully submitted";
+		
 	}
 	
 	$scope.generateTimeTableFunction = function()

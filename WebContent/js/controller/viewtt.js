@@ -8,6 +8,8 @@ deviatorApp.controller("viewTimeTable",function($scope,$location,appMenuLabel,ti
 		$scope.daysList=[];
 		$scope.classList =[];
 		$scope.tt = [];
+		$scope.ttc_message ="";
+		$scope.ttc_message ="fetching meta data from server";
 		timetableCollection.loadMetaData({"renderView" : $scope.renderView})
 		
 	}
@@ -20,8 +22,10 @@ deviatorApp.controller("viewTimeTable",function($scope,$location,appMenuLabel,ti
 	$scope.renderView = function(result)
 	{
 		
+		$scope.ttc_message ="";
 		if(!result)
 		{
+		 $scope.ttc_message ="In in fetching data from server"
 		 console.log(" Error In the resp");
 		 return false;
 		}
