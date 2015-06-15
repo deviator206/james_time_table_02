@@ -128,20 +128,20 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 														timetableService.addRowInTimeTable(tempObj);
 														timetableService.addForDisplay(tempObj);
 														timetableService.blockTeacher(teachers.teacher_id,classes[classIndex].class_id,days[dayIndex].day_id,slots[slotIndex].slot_id);
-														timetableService.addBreakInTT({
+														/*timetableService.addBreakInTT({
 																"day_id":days[dayIndex].day_id,
 																"day_label":days[dayIndex].day_label,
 																
-																"slot_id":timetableCollection.getBreakSlot().slot_id,
+																"slot_id":20,
 																"class_label":classes[classIndex].class_label,
 																"class_id":classes[classIndex].class_id,
 																
-																"teacher_id" :"",
-																"teacher_name":"",
+																"teacher_id" :"34",
+																"teacher_name":"BREAK",
 																
-																"subject_id" :"",
+																"subject_id" :"75",
 																"subject_label" :"BREAK"
-															});
+															});*/
 														timetable[classes[classIndex].class_id+"_"+days[dayIndex].day_id+"_"+slots[slotIndex].slot_id]= tempObj;
 														if(slotTracker.length >= perDayMax)
 															break;
@@ -164,7 +164,7 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 																"subject_label" :"NOT AVAILABLE"
 															}; 
 														timetableService.addForDisplay(tempObj);
-														console.log(" SLOT : "+slots[slotIndex].slot_id +" | "+slots[slotIndex].slot_label+"teachers not availble",teachers)
+														//console.log(" SLOT : "+slots[slotIndex].slot_id +" | "+slots[slotIndex].slot_label+"teachers not availble",teachers)
 														
 													}//
 												}//IF SLOT EXIsT
@@ -190,8 +190,28 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 				
 			//	console.log(timetable);
 		}//CLASS 
-		 
-		timetableService.addBreakInTT();
+		
+		for(var classIndex =0;classIndex < classes.length;classIndex++)
+			{
+				//days
+				for(var dayIndex = 0;dayIndex< days.length;dayIndex++)
+					{
+						timetableService.addBreakInTT({
+							"day_id":days[dayIndex].day_id,
+							"day_label":days[dayIndex].day_label,
+							
+							"slot_id":20,
+							"class_label":classes[classIndex].class_label,
+							"class_id":classes[classIndex].class_id,
+							
+							"teacher_id" :"34",
+							"teacher_name":"BREAK",
+							
+							"subject_id" :"75",
+							"subject_label" :"BREAK"
+						});
+					}
+			}
 		console.log(timetableService.getFinalTTObject());
 		console.log(timetableService.getFinalTT());
 		$scope.ttc_timetable = timetableService.getFinalTTObject();
@@ -212,7 +232,7 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 		
 		for(var dayIndex = 0;dayIndex< days.length;dayIndex++)
 		{
-			console.log(" DAY : "+days[dayIndex].day_id +" | "+days[dayIndex].day_label);
+			
 			var localSubjectTracker = [];
 			for(var slotIndex = 0;slotIndex< slots.length;slotIndex++)
 			{

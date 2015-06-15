@@ -196,11 +196,37 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 	this.fetchClassTT = function(id,controllerScope)
 	{
 		//data/class_tt.json?id='+id
-		$http.get(appMenuLabel.SERVER_URL['LOAD_CLASS_SPECIFIC_DATA']).
+		$http.get(appMenuLabel.SERVER_URL['LOAD_CLASS_SPECIFIC_DATA']+"?id="+id).
 			  success(function(data, status, headers, config) {
 				// this callback will be called asynchronously
 				// when the response is available
 					ttCollection = data.readOnlyTimeTable;
+					var ttcTemp = [];
+					var slotCounter = ttCollection["MONDAY"].length;
+					
+					
+					for(key in ttCollection)
+						{	
+					for(var i=0;i<slotCounter;i++)
+								{
+									var arrT = [];
+										if(ttcTemp[i] == undefined)
+											{
+											   arrT.push(ttCollection[key][i]["slot_label"]);
+											   arrT.push(ttCollection[key][i]["subject_name"]);
+											   ttcTemp[i] = arrT;
+											}
+										else
+											{
+											   arrT = ttcTemp[i];
+											   arrT.push(ttCollection[key][i]["subject_name"]);
+											   ttcTemp[i] = arrT;
+											}
+								
+								}
+						}
+							
+					ttCollection =  ttcTemp;
 					controllerScope.dataFetched(true);
 			  }).
 			  error(function(data, status, headers, config) {
@@ -279,7 +305,7 @@ deviatorApp.service("timetableService",function($http,appMenuLabel){
 	{
 		$http.get(appMenuLabel.SERVER_URL["FETCH_EXISTING_TT"]).
 		  success(function(data, status, headers, config) {
-			ttc = data.timetable;
+			ttc = [];// data.timetable;
 			instance.responseReceived(true);
 		  }).
 		  error(function(data, status, headers, config) {
@@ -290,6 +316,8 @@ deviatorApp.service("timetableService",function($http,appMenuLabel){
 	
 	this.addRowInTimeTable = function(obj)
 	{
+		console.log("********** : "+ttc.length);
+		console.log(obj);
 		if(obj != undefined)
 			ttc.push(obj);
 	};
@@ -301,6 +329,9 @@ deviatorApp.service("timetableService",function($http,appMenuLabel){
 	
 	this.addBreakInTT = function(obj)
 	{
+		console.log("********** : "+ttc.length);
+		console.log(obj);
+		if(obj != undefined)
 		ttc.push(obj);
 	}
 	

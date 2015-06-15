@@ -41,6 +41,9 @@ public class SubmitGeneratedTimeTable extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}
+	
+	
+	
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -94,25 +97,23 @@ public class SubmitGeneratedTimeTable extends HttpServlet {
 			System.out.println("fetching array");
 			for(int i =0;i<jsRequest.length();i++)
 			{
-				
-				JSONObject jsTemp = (JSONObject) jsRequest.get(i);
-				if(jsTemp != null)
+				System.out.println("________________________________");
+				if(jsRequest.get(i) != null)
 				{
-				
-				System.out.println(jsTemp.get("slot_id"));
-				System.out.println("class_id:"+jsTemp.get("class_id"));
-				System.out.println("teacher_id :"+jsTemp.get("teacher_id"));
-				System.out.println("teacher_name:"+jsTemp.get("teacher_name"));
-				System.out.println(jsTemp.get("subject_id"));
-				stmnt.setInt(1,(Integer) jsTemp.get("slot_id"));
-				stmnt.setInt(2, (Integer)jsTemp.get("class_id"));
-				stmnt.setInt(3, (Integer)jsTemp.get("teacher_id"));
-				stmnt.setString(4, (String)jsTemp.get("teacher_name"));
-				stmnt.setInt(5, (Integer)jsTemp.get("subject_id"));
-				stmnt.setString(6, (String)jsTemp.get("subject_label"));
-				stmnt.setInt(7, (Integer)jsTemp.get("day_id"));
-				stmnt.setString(8, (String)jsTemp.get("day_label"));
-				stmnt.addBatch();
+					System.out.println("&&&&&&&&&&&&&&&&&&&&&");
+					System.out.println(jsRequest.get(i));
+					JSONObject jsTemp = (JSONObject) jsRequest.get(i);
+					
+						System.out.println(jsTemp.toString());
+						stmnt.setInt(1,converJSONToInt(jsTemp.get("slot_id")));
+						stmnt.setInt(2, converJSONToInt(jsTemp.get("class_id")));
+						stmnt.setInt(3, converJSONToInt(jsTemp.get("teacher_id")));
+						stmnt.setString(4, (String)jsTemp.get("teacher_name"));
+						stmnt.setInt(5, converJSONToInt(jsTemp.get("subject_id")));
+						stmnt.setString(6, (String)jsTemp.get("subject_label"));
+						stmnt.setInt(7, converJSONToInt(jsTemp.get("day_id")));
+						stmnt.setString(8, (String)jsTemp.get("day_label"));
+						stmnt.addBatch(); 
 				}
 			}
 			int[] resp = stmnt.executeBatch();
@@ -140,6 +141,22 @@ public class SubmitGeneratedTimeTable extends HttpServlet {
 		out.write(jsReturn.toString());
 		out.close();
 
+	}
+
+	private int converJSONToInt(Object object) {
+		int result = 0 ;
+		System.out.println("***************");
+		System.out.println(object);
+		if(object instanceof Integer)
+		{
+			result = (Integer) object;
+		}
+		else
+		{
+			System.out.println(object);
+			result =Integer.parseInt((String)object);
+		}
+		return result; 
 	}
 
 }

@@ -60,14 +60,14 @@ public class fetchTT extends HttpServlet {
 				JSONObject jObj = new JSONObject();
 				jObj.put("timetable_id", rs.getInt(1));
 				
-				jObj.put("slot_id", rs.getInt(1));
-				jObj.put("class_id", rs.getInt(2));
-				jObj.put("teacher_id", rs.getInt(3));
-				jObj.put("teacher_name", rs.getString(4));
-				jObj.put("subject_id", rs.getInt(5));
-				jObj.put("subject_label", rs.getString(6));
-				jObj.put("day_id", rs.getInt(7));
-				jObj.put("day_label", rs.getString(8));
+				jObj.put("slot_id", rs.getInt(2));
+				jObj.put("class_id", rs.getInt(3));
+				jObj.put("teacher_id", rs.getInt(4));
+				jObj.put("teacher_name", rs.getString(5));
+				jObj.put("subject_id", rs.getInt(6));
+				jObj.put("subject_label", rs.getString(7));
+				jObj.put("day_id", rs.getInt(8));
+				jObj.put("day_label", rs.getString(9));
 				
 			/*	"subject_label":"susane"
 				"class_label":"I",

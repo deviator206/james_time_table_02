@@ -11,8 +11,8 @@ public class DBProperties {
 	static String DB_URL ="jdbc:mysql://localhost/dev_teacher";
 	
 	static  String User = "root";
-	static  String Password = "root";
-	//static  String Password = "Temp1234";
+	//static  String Password = "root";
+	static  String Password = "Temp1234";
 	
 	static Connection conn = null;
 	
