@@ -207,23 +207,23 @@ deviatorApp.service("timetableCollection",function($http,appMenuLabel){
 					
 					for(key in ttCollection)
 						{	
-					for(var i=0;i<slotCounter;i++)
-								{
-									var arrT = [];
-										if(ttcTemp[i] == undefined)
-											{
-											   arrT.push(ttCollection[key][i]["slot_label"]);
-											   arrT.push(ttCollection[key][i]["subject_name"]);
-											   ttcTemp[i] = arrT;
-											}
-										else
-											{
-											   arrT = ttcTemp[i];
-											   arrT.push(ttCollection[key][i]["subject_name"]);
-											   ttcTemp[i] = arrT;
-											}
-								
-								}
+							for(var i=0;i<ttCollection[key].length;i++)
+										{
+											var arrT = [];
+												if(ttcTemp[i] == undefined)
+													{
+													   arrT.push(ttCollection[key][i]["slot_label"]);
+													   arrT.push(ttCollection[key][i]["subject_name"]);
+													   ttcTemp[i] = arrT;
+													}
+												else
+													{
+													   arrT = ttcTemp[i];
+													   arrT.push(ttCollection[key][i]["subject_name"]);
+													   ttcTemp[i] = arrT;
+													}
+										
+										}
 						}
 							
 					ttCollection =  ttcTemp;

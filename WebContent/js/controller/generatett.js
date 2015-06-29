@@ -119,6 +119,7 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 																"day_label":days[dayIndex].day_label,
 																
 																"slot_id":slots[slotIndex].slot_id,
+																"slot_label":slots[slotIndex].slot_label,
 																"class_label":classes[classIndex].class_label,
 																"class_id":classes[classIndex].class_id,
 																
@@ -155,7 +156,7 @@ deviatorApp.controller("finalStepTimeTable",function($scope,timetableCollection,
 														var tempObj = {
 																"day_id":days[dayIndex].day_id,
 																"day_label":days[dayIndex].day_label,
-																
+																"slot_label":slots[slotIndex].slot_label,
 																"slot_id":slots[slotIndex].slot_id,
 																"class_id":classes[classIndex].class_id,
 																"class_label":classes[classIndex].class_label,

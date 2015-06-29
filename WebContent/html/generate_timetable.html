@@ -169,7 +169,7 @@
 						 <span class="lead">Class : {{singleClass.class_label}} </span>
 					</div>
 					<div class="row"  >
-						<table class="col-xs-2 table-bordered"  >
+						<table class="col-xs-1 table-bordered" style="display:none"  >
 							<tr>
 								<th class="">Time</th>
 							</tr>
@@ -182,7 +182,7 @@
 								<th class=""> {{dayObject.day_label}}</th>
 							</tr>
 							<tr ng-repeat = "ttObject in dayObject.slot_list">
-								<td>{{ttObject.subject_label }}  {{ (ttObject.teacher_name !== "NA" && ttObject.teacher_name !== ""  )?"("+ttObject.teacher_name+")":""}}</td>
+								<td> <div>{{ttObject.slot_label}} </div> <div> : {{ttObject.subject_label }}  </div> <div>{{ (ttObject.teacher_name !== "NA" && ttObject.teacher_name !== ""  )?"("+ttObject.teacher_name+")":""}}</div></td>
 							</tr>
 					  </table>
 					</div>

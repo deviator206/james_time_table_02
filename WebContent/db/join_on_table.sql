@@ -12,6 +12,10 @@ SELECT * FROM time_table (slotid,classid,teacherid,teachername,subjectid,subject
 
 SELECT * FROM time_table
 
+
+SELECT * FROM time_table
+
+TRUNCATE TABLE time_table
 SELECT tbl.slotid,
        tbl.classid,
        tbl.teacherid,

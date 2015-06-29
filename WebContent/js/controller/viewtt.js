@@ -21,7 +21,7 @@ deviatorApp.controller("viewTimeTable",function($scope,$location,appMenuLabel,ti
 	
 	$scope.renderView = function(result)
 	{
-		
+		alert("data fetched !!");
 		$scope.ttc_message ="";
 		if(!result)
 		{
